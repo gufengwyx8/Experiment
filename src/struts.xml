@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+    "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+    "http://struts.apache.org/dtds/struts-2.0.dtd">
+
+<struts>
+
+	<constant name="struts.enable.DynamicMethodInvocation" value="false" />
+	<constant name="struts.devMode" value="true" />
+	<constant name="struts.i18n.encoding" value="utf-8" />
+	<constant name="struts.custom.i18n.resources" value="applicationResource" />
+	<constant name="struts.ognl.allowStaticMethodAccess" value="true"></constant>
+	<constant name="struts.multipart.maxSize" value="10701096" />
+
+	<package name="experiment-default" namespace="/" extends="json-default">
+		<interceptors>
+			<interceptor name="userInterceptor"
+				class="com.experiment.interceptor.UserInterceptor" />
+			<interceptor-stack name="mystack">
+				<interceptor-ref name="userInterceptor"></interceptor-ref>
+				<interceptor-ref name="defaultStack"></interceptor-ref>
+			</interceptor-stack>
+		</interceptors>
+		<default-interceptor-ref name="mystack"></default-interceptor-ref>
+		<global-results>
+			<result name="login" type="redirect">/login</result>
+		</global-results>
+	</package>
+
+	<package name="index" namespace="/" extends="experiment-default">
+		<default-action-ref name="index" />
+		<action name="reg" class="userAction" method="reg">
+			<result name="success" type="redirect">/index</result>
+		</action>
+		<action name="login" class="userAction" method="login">
+			<result name="input" type="redirect">/index</result>
+			<result name="success" type="redirect">/index</result>
+			<result name="error" type="redirect">/index</result>
+		</action>
+		<action name="logout" class="homeAction" method="logout">
+			<result name="success" type="redirect">/index</result>
+		</action>
+		<action name="index" class="homeAction" method="index">
+			<result>/index.jsp</result>
+			<result name="error">/login.jsp</result>
+		</action>
+	</package>
+
+	<package name="experiment" namespace="/experiment" extends="experiment-default">
+		<action name="listExperiment" class="experimentAction" method="listExperiment">
+			<result>/experiment/listExperiment.jsp</result>
+		</action>
+		<action name="singleSearch" class="experimentAction" method="singleSearch">
+			<result>/experiment/singleSearch.jsp</result>
+		</action>
+		<action name="multiSearch" class="experimentAction" method="multiSearch">
+			<result>/experiment/multiSearch.jsp</result>
+		</action>
+		<action name="showExperiment" class="experimentAction" method="showExperiment">
+			<result>/experiment/showExperiment.jsp</result>
+		</action>
+		<action name="editExperiment" class="experimentAction" method="editExperiment">
+			<result name="input">/experiment/editExperiment.jsp</result>
+			<result type="redirect">/experiment/showExperiment?experiment.id=${experiment.id}</result>
+		</action>
+		<action name="removeExperiment" class="experimentAction" method="removeExperiment">
+			<result type="redirect">/experiment/listExperiment</result>
+		</action>
+	</package>
+	
+	<package name="user" namespace="/user" extends="experiment-default">
+		<action name="listUser" class="userAction" method="listUser">
+			<result>/user/listUser.jsp</result>
+		</action>
+		<action name="showUser" class="userAction" method="showUser">
+			<result>/user/showUser.jsp</result>
+		</action>
+		<action name="editUser" class="userAction" method="editUser">
+			<result name="input">/user/editUser.jsp</result>
+			<result type="redirect">/user/showUser?user.id=${user.id}</result>
+		</action>
+		<action name="removeUser" class="userAction" method="removeUser">
+			<result type="redirect">/user/listUser</result>
+		</action>
+		<action name="password" class="userAction" method="password">
+			<result name="input">/user/password.jsp</result>
+			<result type="redirect">/user/showUser?user.id=${loginUser.id}</result>
+		</action>
+	</package>
+</struts>
